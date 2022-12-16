@@ -7,10 +7,20 @@ public class TableroHLF {
 	int bY;
 	public char tablero[][];
 	public char tableroMostrar[][];
+	public Boolean whereIHit[][];
 
 	public TableroHLF(int espacio, char naruto,String ID) {
 		this.ID = ID;
 		tablero = new char[espacio][espacio];
+		if(ID.equals("enemy")) {
+			Boolean tmp[][] = new Boolean[espacio][espacio];
+			for(int aux = 0; aux<tmp.length;aux++){
+				for(int aux2 = 0; aux2<tmp[aux].length; aux2++) {
+					tmp[aux][aux2] = false;
+				}
+			}
+			whereIHit = tmp;
+		}
 		tableroMostrar = new char[espacio][espacio];
 		rellenaTablero(naruto);
 	}

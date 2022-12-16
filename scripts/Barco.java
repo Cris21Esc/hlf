@@ -80,36 +80,49 @@ public class Barco {
 	
 	public void destroyed(String ID) {
 		hundido = true;
-		if(longitud == 1) {
-			System.out.println("Fragata hundida");
-		}else if(longitud == 2){
-			System.out.println("Crucero hundido");
-		}
-		else if(longitud == 3){
-			System.out.println("Acorazado hundido");
-		}
-		else if(longitud == 4){
-			System.out.println("Portaaviones hundido");
-		}
 		if(hundido == true && ID.equals("player")) {
+			if(longitud == 1) {
+				System.out.println("Fragata enemiga hundida");
+			}else if(longitud == 2){
+				System.out.println("Crucero enemigo hundido");
+			}
+			else if(longitud == 3){
+				System.out.println("Acorazado enemigo hundido");
+			}
+			else if(longitud == 4){
+				System.out.println("Portaaviones enemigo hundido");
+			}
 			GameManager.updateBoatsE(1);;
 		}else if(hundido == true && ID.equals("enemy")) {
+			if(longitud == 1) {
+				System.out.println("Fragata aliada hundida");
+			}else if(longitud == 2){
+				System.out.println("Crucero aliado hundido");
+			}
+			else if(longitud == 3){
+				System.out.println("Acorazado aliado hundido");
+			}
+			else if(longitud == 4){
+				System.out.println("Portaaviones aliado hundido");
+			}
 			GameManager.updateBoatsP(1);
 		}
 	}
-	
+	public Boolean checkAlive() {
+		return hundido;
+	}
 	public String toString() {
 		String showB = "";
 		if(longitud == 1) {
-			showB += "fragata, ";
+			showB += "fragata";
 		}else if(longitud == 2){
-			showB += "crucero, ";
+			showB += "crucero";
 		}
 		else if(longitud == 3){
-			showB += "acorazado, ";
+			showB += "acorazado";
 		}
 		else if(longitud == 4){
-			showB += "portaaviones, ";
+			showB += "portaaviones";
 		}
 		return showB;
 	}

@@ -13,7 +13,6 @@ public class GameManager {
 	private static Barco tipoDeBarcoE[];
 	private static String rm;
 	private static int diff;
-	
 	public static void main(String[] args) {
 		diff = setDiff();
 		showBoards();
@@ -30,7 +29,6 @@ public class GameManager {
 			shootBoat();
 			shootEnemy();
 			showBoards();
-			showBR();
 			if(boatsInGameP <= 0) {
 				break;
 			}
@@ -42,7 +40,6 @@ public class GameManager {
 		}
 		gameOver(ganador);
 	}
-
 	public static void setBoatPlayerManually(int diff) {
 		System.out.println("Vamos a colocar los barcos");
 		if (boatsInGameP == 0) {
@@ -175,7 +172,7 @@ public class GameManager {
 			else {
 				X = secureBoatPlayerRX(L,X,O);	
 			}
-			while(checkPositionE(X,Y,L,O) == false) {
+			while(checkPositionP(X,Y,L,O) == false) {
 				X = (int) (Math.random()*8)+1;
 				while(X < 1 || X > 8) {
 					X = (int) (Math.random()*8)+1;
@@ -202,7 +199,6 @@ public class GameManager {
 				}
 			}
 			plBoard.setBoat(X,Y,L,O);
-			System.out.println("barco " + (boatsInGameP+1) + " colocado bien");
 			if(L == 1) {
 				Barco fragata = new Barco(L,X,Y,O);
 				fragata.addCoordinate(X, Y);
@@ -226,10 +222,6 @@ public class GameManager {
 			boatsInGameP++;
 		}
 		tipoDeBarcoP = tmp;
-		System.out.println("Has puesto " + boatsToSetP + " barcos:");
-		for(int aux = 0; aux < tipoDeBarcoP.length;aux++) {
-			System.out.println(tipoDeBarcoP[aux]);
-		}
 	}
 	public static void setBoatEnemy(int diff) {
 		if (boatsInGameE == 0) {
@@ -313,10 +305,6 @@ public class GameManager {
 			boatsInGameE++;
 		}
 		tipoDeBarcoE = tmp;
-		System.out.println("El enemigo ha puesto " + boatsToSetE + " barcos:");
-		for(int aux = 0; aux < tipoDeBarcoE.length;aux++) {
-			System.out.println(tipoDeBarcoE[aux]);
-		}
 	}
 	public static void shootBoat() {
 		String place;
@@ -325,47 +313,51 @@ public class GameManager {
 		place = sc.next();
 		Y = letrasToNumeros(place.substring(0, 1));
 		while(Y < 1 || Y > 8) {
+			System.out.println("Escoge una coordenada alfabetica dentro del tablero");
 			place = sc.next();
 			Y = letrasToNumeros(place.substring(0, 1));
 		}
 		int X = Integer.parseInt(place.substring(1));
 		while(X < 1 || X > 8) {
+			System.out.println("Escoge una coordenada numerica dentro del tablero");
 			X = sc.nextInt();
-		}
-		if(Y < 0 || Y > 8) {
-			System.out.println("Ingresa una coordenada dentro del tablero");
-			X = sc.nextInt();
-		}
-		if(X < 0 || X > 8) {
-			System.out.println("Ingresa una coordenada dentro del tablero");
-			Y = sc.nextInt();
 		}
 		if(opBoard.checkBoat(X, Y) == true) {
+			System.out.println("Has dado a un barco");
 			for(int aux = 0; aux < tipoDeBarcoE.length; aux++) {
 				if(tipoDeBarcoE[aux].checkHit(X, Y,"player") == true) {
 					opBoard.hitBoat(X, Y);
 				}								
 			}
-			System.out.println("Has dado a un barco");
 		}else {
 			opBoard.missShot(X,Y);
 			System.out.println("Disparo fallido");
 		}
 		
 	}
+	@SuppressWarnings("unused")
 	public static void shootEnemy() {
 		int X = (int) (Math.random()*8)+1;
 		int Y= (int) (Math.random()*8)+1;
 		String letras[] = {"A","B","C","D","E","F","G","H"};
 		System.out.println("Oponente dispara en: "+ letras[(Y-1)] + X);
+		while(opBoard.whereIHit[(X-1)][(Y-1)] != false) {
+			X = (int) (Math.random()*8)+1;
+			Y= (int) (Math.random()*8)+1;
+		}
 		if(plBoard.checkBoat(X, Y) == true) {
 			System.out.println("Han golpeado tu barco");
-			for(int aux = 0; aux < boatsToSetE; aux++) {
-				if(tipoDeBarcoP[aux].checkHit(X, Y,"enemy") == true) {
+			for(int aux = 0; aux < boatsToSetE;aux++) {
+				if(tipoDeBarcoP[aux].checkHit(X, Y,"enemy") == true && diff >= 4) {
+					plBoard.hitBoat(X, Y);
+					opBoard.whereIHit[(X-1)][(Y-1)]= true;
+					break;
+				}
+				else {
+					plBoard.hitBoat(X, Y);
 					break;
 				}
 			}
-			plBoard.hitBoat(X, Y);
 		}
 		else {
 			plBoard.missShot(X, Y);
@@ -375,16 +367,26 @@ public class GameManager {
 	public static void showBoards() {
 		System.out.println(opBoard);
 		System.out.println(plBoard);
+		if(boatsInGameE >= 0 && boatsInGameP >= 0) {
+			System.out.println("Barcos aliados con vida: " + boatsInGameP );
+			for(int aux = 0; aux < boatsToSetP; aux++) {
+				if(tipoDeBarcoP[aux].checkAlive() == false) {
+					System.out.println(tipoDeBarcoP[aux]);
+				}
+			}
+			System.out.println("Barcos enemigos con vida: " + boatsInGameE);
+			for(int aux = 0; aux < boatsToSetE; aux++) {
+				if(tipoDeBarcoE[aux].checkAlive() == false) {
+					System.out.println(tipoDeBarcoE[aux]);
+				}
+			}
+		}
 	}
 	public static void updateBoatsP(int num) {
 		boatsInGameP = boatsInGameP - num;
 	}
 	public static void updateBoatsE(int num) {
 		boatsInGameE = boatsInGameE - num;
-	}
-	public static void showBR() {
-		System.out.println("Barcos aliados restantes: " + boatsInGameP);
-		System.out.println("Barcos enemigos restantes: " + boatsInGameE);
 	}
 	public static int secureBoatPlayerY(int L, int X, String ori) {
 		
