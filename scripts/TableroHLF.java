@@ -70,21 +70,26 @@ public class TableroHLF {
 	}
 	
 	public String toString() {
-		String showT = "";
+		String showT = "  A  B  C  D  E  F  G  H \n";
+		int num = 1;
 		
 		if(ID.equals("player")) {
 			for(int aux = 0; aux<tablero.length; aux++) {
+				showT += num;
 				for(int aux2 = 0; aux2<tablero[aux].length;aux2++){
 					showT += "[" + tablero[aux][aux2] + "]";
 				}
+				num++;
 				showT+="\n";
 			}
 		}
 		else if(ID.equals("enemy")) {
 			for(int aux = 0; aux<tableroMostrar.length; aux++) {
+				showT += num;
 				for(int aux2 = 0; aux2<tableroMostrar[aux].length;aux2++){
 					showT += "[" + tableroMostrar[aux][aux2] + "]";
 				}
+				num++;
 				showT+="\n";
 			}
 		}

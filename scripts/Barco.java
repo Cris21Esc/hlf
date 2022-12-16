@@ -2,20 +2,22 @@ package scripts;
 
 public class Barco {
 	
-	private String tipo;
 	private int longitud;
-	private int tocado;
 	private Boolean hundido = false;
 	private int coordenadasX[];
 	private int coordenadasY[];
 	private String orientacion;
-	
-	public Barco(int size, int X, int Y, String orientacion, String tipo) {
+	private Boolean destroyed[];
+	public Barco(int size, int X, int Y, String orientacion) {
 		longitud = size;
+		Boolean tmp[] = new Boolean[longitud];
+		for(int aux = 0; aux<tmp.length;aux++) {
+			tmp[aux] = false;
+		}
+		destroyed = tmp;
 		coordenadasX = new int[longitud];
 		coordenadasY = new int[longitud];
 		this.orientacion = orientacion;
-		this.tipo = tipo;
 	}
 	
 	public void addCoordinate(int X, int Y) {
@@ -41,34 +43,74 @@ public class Barco {
 			}
 		}
 	}
-	
-	public static String checkBoat(int X, int Y) {
-		String barco = null;
-		return barco;
-	}
 
-	public Boolean checkHit(int X, int Y) {
-		Boolean xChecked=false;
-		Boolean yChecked=false;
+	public Boolean checkHit(int X, int Y, String ID) {
 		Boolean hit = false;
+		Boolean eliminated = false;
+		Boolean  drowned = false;
+		int allHits = 0;
 		 
 		for(int aux = 0; aux<coordenadasX.length && aux < coordenadasY.length;aux++) {
-			if(coordenadasX[aux] == X) {
-				xChecked = true;
-			}
-			if(coordenadasY[aux] == Y) {
-				yChecked = true;
-			}
-			if(xChecked == true && yChecked == true) {
+			if(coordenadasX[aux] == X && coordenadasY[aux] == Y) {
 				hit = true;
+				destroyed[aux] = true;
 				break;
 			}
+		}
+		for(int aux = 0; aux<destroyed.length;aux++) {
+			if(destroyed[aux] == true) {
+				drowned = true;
+				allHits++;
+				
+			}else {
+				drowned = false;
+			}
+			if(drowned == true) {
+				eliminated = true;
+			}
+			else {
+				eliminated = false;
+			}
+		}
+		if(eliminated == true && allHits == destroyed.length && hundido == false) {
+			destroyed(ID);
 		}
 		return hit;
 	}
 	
-	public void destroyed() {
-		
-		 hundido = true;
-	 }
+	public void destroyed(String ID) {
+		hundido = true;
+		if(longitud == 1) {
+			System.out.println("Fragata hundida");
+		}else if(longitud == 2){
+			System.out.println("Crucero hundido");
+		}
+		else if(longitud == 3){
+			System.out.println("Acorazado hundido");
+		}
+		else if(longitud == 4){
+			System.out.println("Portaaviones hundido");
+		}
+		if(hundido == true && ID.equals("player")) {
+			GameManager.updateBoatsE(1);;
+		}else if(hundido == true && ID.equals("enemy")) {
+			GameManager.updateBoatsP(1);
+		}
+	}
+	
+	public String toString() {
+		String showB = "";
+		if(longitud == 1) {
+			showB += "fragata, ";
+		}else if(longitud == 2){
+			showB += "crucero, ";
+		}
+		else if(longitud == 3){
+			showB += "acorazado, ";
+		}
+		else if(longitud == 4){
+			showB += "portaaviones, ";
+		}
+		return showB;
+	}
 }
